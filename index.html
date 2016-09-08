@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Welcome to AmsterdamJS</title>
+  <style>
+
+    body {
+      font-family: sans-serif;
+      font-weight: 300;
+      color: White;
+      background-color: #bd101b;
+      /* TODO: Use licensed photo and do not hot-link */
+      background-image: url(http://c3.staticflickr.com/6/5695/23674126106_2fe420709f_k.jpg);
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    #greets, #names {
+      text-align: center;
+      font-size: 3em;
+      height: 1em;
+    }
+    #greets {
+      font-weight: 600;
+      margin-top: .5em;
+    }
+
+    strong {
+      font-weight: 600;
+    }
+
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+
+    li {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      left: 1rem;
+      opacity: 0;
+      transition-property: opacity;
+    }
+
+    #names li {
+      transition-duration: .4s;
+    }
+
+    #source {
+      position: absolute;
+      left: 1rem;
+      bottom: 1rem;
+      line-height: 1.4;
+    }
+
+    #sponsors {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+      font-size: 2em;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="greets">welcome to #amsterdamjs</div>
+  <ul id="names">
+  </ul>
+  <div id="source">
+    Improve this lousy splash page at:<br>
+    <strong>https://github.com/amsterdamjs/splash</strong>
+  </div>
+  <!-- TODO: Make sponsors configurable -->
+  <div id="sponsors">
+    Thank you <strong>Booking.com</strong> & <strong>BlueFront</strong>!
+  </div>
+  <script>
+
+    // TODO: Fetch attendees from Meetup API:
+    // http://www.meetup.com/meetup_api/docs/:urlname/events/:event_id/rsvps/#list
+    var attendees = `
+Abe Garcia
+Ad van Winkel
+Ahmed El Gabri
+Ajay
+Alex Badarin
+Alex Komlev
+Alexander Korvyakov
+Alexander Melnikov
+Alexander Schrijver
+Alexey  Kureev
+Andra S
+Andre Gil
+Andrea Mazzilli
+Anton  Grishun
+Anton Eprev
+Anton Timmermans
+Anya
+Ariel Altamirano
+Asia Jackowska
+Bart Meinders
+Benjamin Udink ten Cate
+Bennett Kleinberg
+Bernardo Baquero Stand
+Bert Belder
+Bob Bijvoet
+Bohdan Tsymbala
+Caio Gondim
+Carla Babadopulos
+Carlo Butelli
+Charlie
+Clyde Lobo
+Daijiro Wachi
+Dan-el Khen
+Dana I.
+Daniela Gavidia
+Dax Huiberts
+Denis Radin
+Denys
+Diederik Eenschooten
+Dima
+Dima Arnautov
+Dimitra V.
+DJ
+Dmitri Malyshev
+Dmitri Smirnov
+Ed Bespalov
+Eric Saboia
+Erwin Hendriks
+Erwin Poeze
+Floris Sebastiaan Koch
+Geurt Sengers
+Giovanni Gaglione
+Guguev  Vladimir
+Guido Villaverde
+Gustavo
+Haris Tampakopoulos
+Harrie Pieters
+Hay Kranen
+Iván Stepaniuk
+Izel Nakri
+Jaimy de Graaf
+Jan Van Der Veen
+Jasper Schulte
+Jasper van Naarden
+Javier Rocamora
+Jermaine
+Jip
+Joe Oliver
+Johannes Sanders
+John
+Jona Andersen
+Joost de Vries
+joost elfering
+Joost Heijkoop
+Jordi van der Hek
+Jorik Kraaikamp
+Jorn Bostelaar
+joycollector
+Katia Agnamazian
+Kenji Wada
+Kyran
+Laure Kamalandua
+Lennart Kats
+Leonid Pyrlia
+Lucas Oliveira
+Lucas Saliba
+Lucas Van Heerikhuizen
+Marc
+Marcus Vinicius
+Mark Bouwman
+Marten Schilstra
+Matheus da Rosa
+Matthijs Dabroek
+Matthijs Kunenborg
+Matthijs van Henten
+Maurice Stam
+Maurits van der Goes
+Maxim Chechenev
+Maximilian Mozes
+Merijn
+Michael
+Michel van Dongen
+Mike
+Mike
+Mike Dobrin
+Mikhail Bashkirov
+Mikhail Larchanka
+mutahhir
+Nataliia Shyianovska
+Nicholas
+Nikolai Onken
+Norbert de Langen
+Okan
+Omar Reiss
+Ovidiu Ionescu
+Paulo Pereira
+Paweł Majda
+Peter Peerdeman
+Peter Van 't Zand
+piet
+Quazi Nafiul Islam
+Qusai Tabbal
+Rachel Romée van der Laan
+Ramiro Rikkert
+Ramon Victor
+Ray Burgemeestre
+Renan Carvalho
+renato
+Ricardo Machado
+Ricardo Torres
+Richard Kraayenhagen
+Rik
+Robbert
+Robert Haritonov
+Robin Ramael
+Roger Kevin Dering
+Sanya Nikulin
+Sergei Maertens
+Sergey Chernov
+Sergey Ilinsky
+Sjoerd Mulder
+sol
+Spyros Ioakeimidis
+Stef
+Stefano Masini
+Stepan Suvorov
+Sven van de Scheur
+thomas b.
+Thomas de Leeuw
+Tim Molendijk
+Tim Nederveen
+Titus Wormer
+Tjin Au Yeung
+Tom Clement
+Veniamin Kleshchenkov
+Ville Karavirta
+Ward Geene
+Weslley Araujo
+Yevgeniy Valeyev
+Yolijn
+    `;
+
+    function shuffleArray(array) {
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+      return array;
+    }
+
+    var namesContainer = document.getElementById('names');
+    var names = shuffleArray(attendees.split("\n").filter(function (name) {
+      return name.trim().length > 0;
+    }));
+    names.forEach(function (name) {
+      var nameElement = document.createElement('li');
+      nameElement.textContent = name;
+      namesContainer.appendChild(nameElement);
+    });
+
+    var showNameElement = namesContainer.firstElementChild;
+    showNameElement.style.opacity = 1;
+    setInterval(function () {
+      showNameElement.style.opacity = null;
+      showNameElement = showNameElement.nextElementSibling || namesContainer.firstElementChild;
+      showNameElement.style.opacity = 1;
+    }, 1300);
+
+  </script>
+</body>
+</html>
